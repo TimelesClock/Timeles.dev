@@ -1,0 +1,21 @@
+---
+import { NavigationMenuLink } from '@/components/ui/navigation-menu';
+import { cn } from '@/lib/utils';
+
+const { className, title, href } = Astro.props;
+---
+
+<li>
+  <NavigationMenuLink asChild>
+    <a
+      class={cn(
+        'block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground',
+        className
+      )}
+      href={href}
+    >
+      <div class="text-sm font-medium leading-none">{title}</div>
+      <slot />
+    </a>
+  </NavigationMenuLink>
+</li>

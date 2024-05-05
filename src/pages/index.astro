@@ -1,0 +1,121 @@
+---
+import "../styles/globals.css";
+import "../styles/cubes.css";
+import Layout from "../layouts/Layout.astro";
+import { Button } from "@/components/ui/button";
+
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+
+import FallingCubes from "@/components/FallingCubes";
+
+import { Badge } from "@/components/ui/badge";
+
+import { getCollection } from "astro:content";
+import { AvatarComponent } from "@/components/ui/avatarcomponent";
+
+let recent_projects = await getCollection("project");
+recent_projects = recent_projects
+  .sort((a, b) => {
+    return (
+      new Date(b.data.timestamp).getTime() -
+      new Date(a.data.timestamp).getTime()
+    );
+  })
+  .slice(0, 5);
+---
+
+<Layout title="Andy Leong">
+  <div class="main-section relative w-screen">
+    <div class="absolute inset-0 z-10">
+      <FallingCubes client:only="react" />
+    </div>
+    <div
+      class="relative px-4 h-full flex flex-col justify-center items-center"
+    >
+      <h1 class="text-4xl font-bold text-center mb-8">Andy Leong</h1>
+      <p class="text-xl text-center text-muted-foreground mb-8">
+        Computer Science enthusiast, web designer hobbyist
+      </p>
+      <div class="flex justify-center mb-8">
+        <Button variant="outline">
+          <a href="/Elliott Chong CV.pdf" target="_blank">View CV</a>
+        </Button>
+      </div>
+      <div class="flex justify-center mb-8">
+        <AvatarComponent
+          client:load
+          src="/images/hero.jpg"
+          alt="test"
+          fallbackText="test"
+        />
+      </div>
+    </div>
+  </div>
+
+  <div class="max-w-3xl mx-auto py-8">
+    <h2 class="text-3xl font-bold mb-4">Recent Projects</h2>
+    <div class="space-y-6">
+      {
+        recent_projects.map((project) => (
+          <Card key={project.slug}>
+            <CardHeader>
+              <CardTitle>
+                <a
+                  href={`/projects/${project.slug}`}
+                  class="text-xl font-semibold text-primary hover:underline"
+                >
+                  {project.data.title}
+                </a>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="text-muted-foreground">
+              <time
+                datetime={project.data.timestamp.toDateString()}
+                class="text-sm mb-2 block"
+              >
+                {new Date(project.data.timestamp).toDateString()}
+              </time>
+              <p class="mt-2">{project.data.description}</p>
+            </CardContent>
+            <CardFooter className="justify-between">
+              <div class="flex flex-wrap gap-2">
+                {project.data.tags.map((tag: string) => (
+                  <Badge className="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-muted text-muted-foreground">
+                    {tag}
+                  </Badge>
+                ))}
+              </div>
+
+              <a
+                href={`/projects/${project.slug}`}
+                class="text-primary inline-block relative"
+              >
+                Read more &rarr;
+                <span class="underline-animation" />
+              </a>
+            </CardFooter>
+          </Card>
+        ))
+      }
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .main-section.mx-auto {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  .main-section {
+    height: 75vh !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+  }
+</style>

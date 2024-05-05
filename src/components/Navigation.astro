@@ -1,0 +1,15 @@
+---
+import { NavigationMenuComponent } from "./NavigationMenu";
+---
+
+<header class="bg-background">
+  <nav
+    class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex justify-evenly items-center"
+  >
+    <div class="flex items-center flex-1">
+      <a href="/" class="text-xl font-bold text-foreground">Andy Leong </a>
+    </div>
+
+    <NavigationMenuComponent client:load />
+  </nav>
+</header>
