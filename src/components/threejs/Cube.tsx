@@ -1,22 +1,31 @@
+// Cube.tsx
 import * as THREE from 'three';
 import { Octahedron } from '@react-three/drei';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { RapierRigidBody, RigidBody } from '@react-three/rapier';
 
 type CubeProps = {
     position: [number, number, number];
-    hover?: boolean;
 };
 
-const Cube: React.FC<CubeProps> = (props, ref) => {
+const Cube = React.forwardRef<{ triggerHoverEffect: () => void, removeHoverEffect: () => void }, CubeProps>((props, ref) => {
     const [hovered, setHovered] = useState(false);
     const lightRef = useRef<THREE.PointLight>(null);
     const materialRef = useRef<THREE.MeshPhysicalMaterial>(null);
     const RigidBodyRef = useRef<RapierRigidBody>(null);
 
+    useImperativeHandle(ref, () => ({
+        triggerHoverEffect: () => {
+            setHovered(true);
+        },
+        removeHoverEffect: () => {
+            setHovered(false);
+        }
+    }));
+
     useEffect(() => {
         if (hovered) {
-            RigidBodyRef?.current?.applyImpulse({ x: 0, y: 5, z: 0 }, true);
+            RigidBodyRef?.current?.applyImpulse({ x: 0, y: 1, z: 0 }, true);
             const fadeInColor = new THREE.Color('white');
             const fadeInEmissive = new THREE.Color('orange');
             const fadeInEmissiveIntensity = 2;
@@ -75,7 +84,7 @@ const Cube: React.FC<CubeProps> = (props, ref) => {
     }, [hovered]);
 
     return (
-        <RigidBody ref={RigidBodyRef} position={props.position}>
+        <RigidBody ref={RigidBodyRef} position={props.position} colliders={"hull"}>
             <Octahedron
                 args={[1, 0]}
                 castShadow
@@ -106,6 +115,6 @@ const Cube: React.FC<CubeProps> = (props, ref) => {
             </Octahedron>
         </RigidBody>
     );
-};
+});
 
 export default Cube;

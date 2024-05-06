@@ -33,11 +33,56 @@ const Cubes: React.FC = () => {
         const posz = Math.random() * 28 - 14;
         return [posx, posy, posz];
     }
+    const scrollRef = useRef(false);
+    const prevScrollPos = useRef(0);
+    const cubeRefs = useRef<React.RefObject<{ triggerHoverEffect: () => void; removeHoverEffect: () => void; }>[]>([]);
+    const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            const currentScrollPos = window.scrollY;
+            scrollRef.current = currentScrollPos > 0;
+
+            if (scrollRef.current && currentScrollPos !== prevScrollPos.current) {
+                if (debounceTimeoutRef.current) {
+                    clearTimeout(debounceTimeoutRef.current);
+                }
+
+                cubeRefs.current.forEach((cubeRef) => {
+                    cubeRef.current?.triggerHoverEffect();
+                });
+
+                debounceTimeoutRef.current = setTimeout(() => {
+                    cubeRefs.current.forEach((cubeRef) => {
+                        cubeRef.current?.removeHoverEffect();
+                    });
+                }, 200); // Adjust the impulse duration as needed
+            }
+
+            prevScrollPos.current = currentScrollPos;
+        };
+
+        window.addEventListener('scroll', handleScroll);
+
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+            if (debounceTimeoutRef.current) {
+                clearTimeout(debounceTimeoutRef.current);
+            }
+            cubeRefs.current.forEach((cubeRef) => {
+                cubeRef.current?.removeHoverEffect();
+            });
+        };
+    }, []);
+
+    useEffect(() => {
+        cubeRefs.current = Array.from({ length: cubeCount }, () => React.createRef());
+    }, [cubeCount]);
 
     return (
         <>
             {Array.from({ length: cubeCount }, (_, index) => (
-                <Cube key={index} position={randomPos()} />
+                <Cube key={index} position={randomPos()} ref={cubeRefs.current[index]} />
             ))}
         </>
     );
@@ -71,7 +116,7 @@ const FallingCubesScene: React.FC = () => {
         <Canvas
             ref={canvasRef}
             shadows
-            dpr={0.6}
+            dpr={0.8}
         >
             <ambientLight intensity={0.5} />
             <Preload all />
