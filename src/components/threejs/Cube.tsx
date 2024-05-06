@@ -8,7 +8,12 @@ type CubeProps = {
     position: [number, number, number];
 };
 
-const Cube = React.forwardRef<{ triggerHoverEffect: () => void, removeHoverEffect: () => void }, CubeProps>((props, ref) => {
+export interface CubeRef {
+    triggerHoverEffect: () => void;
+    removeHoverEffect: () => void;
+}
+
+const Cube = React.forwardRef<CubeRef, CubeProps>((props, ref) => {
     const [hovered, setHovered] = useState(false);
     const lightRef = useRef<THREE.PointLight>(null);
     const materialRef = useRef<THREE.MeshPhysicalMaterial>(null);

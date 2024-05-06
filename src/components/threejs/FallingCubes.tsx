@@ -4,6 +4,8 @@ import { Physics, RigidBody } from "@react-three/rapier";
 import { EffectComposer, Bloom, DepthOfField, Noise, Vignette } from '@react-three/postprocessing';
 import { Preload } from '@react-three/drei';
 import Cube from './Cube';
+import type { CubeRef } from './Cube';
+
 
 const Wall: React.FC<{ position: [number, number, number], size: [number, number, number] }> = ({ position, size }) => {
     return (
@@ -35,35 +37,50 @@ const Cubes: React.FC = () => {
     }
     const scrollRef = useRef(false);
     const prevScrollPos = useRef(0);
-    const cubeRefs = useRef<React.RefObject<{ triggerHoverEffect: () => void; removeHoverEffect: () => void; }>[]>([]);
+    const cubeRefs = useRef<React.RefObject<CubeRef>[]>(
+        Array.from({ length: cubeCount }, () => React.createRef<CubeRef>())
+    );
     const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     useEffect(() => {
         const handleScroll = () => {
             const currentScrollPos = window.scrollY;
-            const scrollThreshold = 1;
-    
+            const scrollThreshold = 1; // Adjust this value as needed
+
             if (Math.abs(currentScrollPos - prevScrollPos.current) > scrollThreshold) {
                 if (debounceTimeoutRef.current) {
                     clearTimeout(debounceTimeoutRef.current);
                 }
-    
                 cubeRefs.current.forEach((cubeRef) => {
                     cubeRef.current?.triggerHoverEffect();
                 });
-    
+
                 debounceTimeoutRef.current = setTimeout(() => {
                     cubeRefs.current.forEach((cubeRef) => {
                         cubeRef.current?.removeHoverEffect();
                     });
                 }, 200);
-    
+
                 prevScrollPos.current = currentScrollPos;
             }
         };
-    
+
+        const initialScrollPos = window.scrollY;
+
+        if (initialScrollPos > 0) {
+            cubeRefs.current.forEach((cubeRef) => {
+                cubeRef.current?.triggerHoverEffect();
+            });
+
+            debounceTimeoutRef.current = setTimeout(() => {
+                cubeRefs.current.forEach((cubeRef) => {
+                    cubeRef.current?.removeHoverEffect();
+                });
+            }, 200);
+        }
+
         window.addEventListener('scroll', handleScroll);
-    
+
         return () => {
             window.removeEventListener('scroll', handleScroll);
             if (debounceTimeoutRef.current) {
@@ -75,10 +92,6 @@ const Cubes: React.FC = () => {
         };
     }, []);
 
-    useEffect(() => {
-        cubeRefs.current = Array.from({ length: cubeCount }, () => React.createRef());
-    }, [cubeCount]);
-
     return (
         <>
             {Array.from({ length: cubeCount }, (_, index) => (
@@ -87,7 +100,6 @@ const Cubes: React.FC = () => {
         </>
     );
 };
-
 const FallingCubesScene: React.FC = () => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
 
