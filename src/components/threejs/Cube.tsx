@@ -31,7 +31,7 @@ const Cube = React.forwardRef<CubeRef, CubeProps>((props, ref) => {
 
     useEffect(() => {
         if (hovered) {
-            RigidBodyRef?.current?.applyImpulse({ x: Math.random(), y: 1, z: Math.random() }, true);
+            RigidBodyRef?.current?.applyImpulse({ x: Math.random() -0.5, y: 1, z: Math.random()-0.5 }, true);
             const fadeInColor = new THREE.Color('white');
             const fadeInEmissive = new THREE.Color('orange');
             const fadeInEmissiveIntensity = 2;
