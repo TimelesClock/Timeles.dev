@@ -41,29 +41,29 @@ const Cubes: React.FC = () => {
     useEffect(() => {
         const handleScroll = () => {
             const currentScrollPos = window.scrollY;
-            scrollRef.current = currentScrollPos > 0;
-
-            if (scrollRef.current && currentScrollPos !== prevScrollPos.current) {
+            const scrollThreshold = 1;
+    
+            if (Math.abs(currentScrollPos - prevScrollPos.current) > scrollThreshold) {
                 if (debounceTimeoutRef.current) {
                     clearTimeout(debounceTimeoutRef.current);
                 }
-
+    
                 cubeRefs.current.forEach((cubeRef) => {
                     cubeRef.current?.triggerHoverEffect();
                 });
-
+    
                 debounceTimeoutRef.current = setTimeout(() => {
                     cubeRefs.current.forEach((cubeRef) => {
                         cubeRef.current?.removeHoverEffect();
                     });
-                }, 200); // Adjust the impulse duration as needed
+                }, 200);
+    
+                prevScrollPos.current = currentScrollPos;
             }
-
-            prevScrollPos.current = currentScrollPos;
         };
-
+    
         window.addEventListener('scroll', handleScroll);
-
+    
         return () => {
             window.removeEventListener('scroll', handleScroll);
             if (debounceTimeoutRef.current) {
