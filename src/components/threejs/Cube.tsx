@@ -6,6 +6,7 @@ import { RapierRigidBody, RigidBody } from '@react-three/rapier';
 
 type CubeProps = {
     position: [number, number, number];
+    rotation: [number, number, number];
 };
 
 export interface CubeRef {
@@ -30,7 +31,7 @@ const Cube = React.forwardRef<CubeRef, CubeProps>((props, ref) => {
 
     useEffect(() => {
         if (hovered) {
-            RigidBodyRef?.current?.applyImpulse({ x: 0, y: 1, z: 0 }, true);
+            RigidBodyRef?.current?.applyImpulse({ x: Math.random(), y: 1, z: Math.random() }, true);
             const fadeInColor = new THREE.Color('white');
             const fadeInEmissive = new THREE.Color('orange');
             const fadeInEmissiveIntensity = 2;
@@ -89,7 +90,7 @@ const Cube = React.forwardRef<CubeRef, CubeProps>((props, ref) => {
     }, [hovered]);
 
     return (
-        <RigidBody ref={RigidBodyRef} position={props.position} colliders={"hull"}>
+        <RigidBody ref={RigidBodyRef} position={props.position} colliders={"hull"} rotation={props.rotation}>
             <Octahedron
                 args={[1, 0]}
                 castShadow

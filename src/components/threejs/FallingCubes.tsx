@@ -9,7 +9,7 @@ import type { CubeRef } from './Cube';
 
 const Wall: React.FC<{ position: [number, number, number], size: [number, number, number] }> = ({ position, size }) => {
     return (
-        <RigidBody type="fixed" position={position}>
+        <RigidBody type="fixed" position={position} ccd={true} restitution={0.4}>
             <mesh receiveShadow>
                 <boxGeometry attach="geometry" args={size} />
                 <meshPhysicalMaterial
@@ -32,10 +32,15 @@ const Cubes: React.FC = () => {
     function randomPos(): [number, number, number] {
         const posx = Math.random() * 28 - 14;
         const posy = Math.random() * 8 - 4;
-        const posz = Math.random() * 28 - 14;
+        const posz = -10;
         return [posx, posy, posz];
     }
-    const scrollRef = useRef(false);
+    function randomRotation(): [number, number, number] {
+        const rotx = Math.random() * 2 * Math.PI;
+        const roty = Math.random() * 2 * Math.PI;
+        const rotz = Math.random() * 2 * Math.PI;
+        return [rotx, roty, rotz];
+    }
     const prevScrollPos = useRef(0);
     const cubeRefs = useRef<React.RefObject<CubeRef>[]>(
         Array.from({ length: cubeCount }, () => React.createRef<CubeRef>())
@@ -95,7 +100,7 @@ const Cubes: React.FC = () => {
     return (
         <>
             {Array.from({ length: cubeCount }, (_, index) => (
-                <Cube key={index} position={randomPos()} ref={cubeRefs.current[index]} />
+                <Cube key={index} position={randomPos()} ref={cubeRefs.current[index]} rotation={randomRotation()} />
             ))}
         </>
     );
@@ -133,13 +138,14 @@ const FallingCubesScene: React.FC = () => {
             <ambientLight intensity={0.5} />
             <Preload all />
             <Physics gravity={[0, -0.5, 0]}>
-                <Cubes />
-                <Wall position={[0, -5, 0]} size={[50, 0.1, 30]} />
-                <Wall position={[0, 5, 0]} size={[50, 0.1, 30]} />
+
+                <Wall position={[0, -5, 0]} size={[30, 0.1, 30]} />
+                <Wall position={[0, 5, 0]} size={[30, 0.1, 30]} />
                 <Wall position={[15, 0, 0]} size={[0.1, 10, 30]} />
                 <Wall position={[-15, 0, 0]} size={[0.1, 10, 30]} />
-                <Wall position={[0, 0, -15]} size={[50, 10, 0.1]} />
-                <Wall position={[0, 0, 0]} size={[50, 10, 0.1]} />
+                <Wall position={[0, 0, -15]} size={[30, 10, 0.1]} />
+                <Wall position={[5, 0, 0]} size={[60, 10, 0.1]} />
+                <Cubes />
             </Physics>
 
             <EffectComposer multisampling={0}>
