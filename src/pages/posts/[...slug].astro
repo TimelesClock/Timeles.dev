@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 
 // 1. Generate a new path for every collection entry
 export async function getStaticPaths() {
-  const blogEntries = await getCollection("project");
+  const blogEntries = await getCollection("post");
   return blogEntries.map((entry) => ({
     params: { slug: entry.slug },
     props: { entry },
@@ -20,7 +20,7 @@ const { Content } = await entry.render();
 ---
 
 <Layout title={`Andy Leong | ${entry.data.title}`}>
-  <div class="max-w-[60vw] mx-auto px-4">
+  <div class="max-w-[60vw] mx-auto px-4 mt-5">
     <div class="text-center">
       <h1 class="md:text-3xl text-xl font-bold">{entry.data.title}</h1>
       <p class="text-gray-400">
@@ -88,7 +88,7 @@ const { Content } = await entry.render();
         </div>
         <div class="mt-8 text-center">
           <a
-            href="/projects"
+            href="/posts"
             class="text-white px-2 py-2 border border-slate-400 rounded-md flex items-center justify-center hover:bg-slate-400 transition duration-150 ease-in-out hover:text-black w-fit mx-auto"
           >
             <svg

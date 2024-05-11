@@ -64,7 +64,7 @@ const Cubes: React.FC = () => {
                     cubeRefs.current.forEach((cubeRef) => {
                         cubeRef.current?.removeHoverEffect();
                     });
-                }, 200);
+                }, 100);
 
                 prevScrollPos.current = currentScrollPos;
             }

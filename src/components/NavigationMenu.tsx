@@ -1,10 +1,7 @@
 import {
     NavigationMenu,
-    NavigationMenuContent,
     NavigationMenuItem,
-    NavigationMenuLink,
     NavigationMenuList,
-    NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
 
 export const NavigationMenuComponent = () => {
@@ -19,8 +16,8 @@ export const NavigationMenuComponent = () => {
         <NavigationMenu className="py-2">
             <NavigationMenuList className="gap-x-2">
                 <NavigationMenuItem>
-                    <a href="/blog" className="text-muted-foreground hover:text-foreground">
-                        Blog
+                    <a href="/posts" className="text-muted-foreground hover:text-foreground">
+                        Posts
                     </a>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
@@ -29,13 +26,8 @@ export const NavigationMenuComponent = () => {
                     </a>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
-                    <a href="/about" className="text-muted-foreground hover:text-foreground">
-                        About
-                    </a>
-                </NavigationMenuItem>
-                <NavigationMenuItem>
                     <a
-                        href="https://github.com/yourusername"
+                        href="https://github.com/timelesclock"
                         target="_blank"
                         rel="noreferrer"
                         className="text-muted-foreground hover:text-foreground"
@@ -50,7 +42,7 @@ export const NavigationMenuComponent = () => {
                 </NavigationMenuItem>
                 <NavigationMenuItem>
                     <a
-                        href="https://linkedin.com/in/yourusername"
+                        href="https://www.linkedin.com/in/andy-leong-9bb486272/"
                         target="_blank"
                         rel="noreferrer"
                         className=" text-muted-foreground hover:text-foreground"

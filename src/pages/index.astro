@@ -28,6 +28,16 @@ recent_projects = recent_projects
     );
   })
   .slice(0, 5);
+
+let recent_posts = await getCollection("post");
+recent_posts = recent_posts
+  .sort((a, b) => {
+    return (
+      new Date(b.data.timestamp).getTime() -
+      new Date(a.data.timestamp).getTime()
+    );
+  })
+  .slice(0, 2);
 ---
 
 <Layout title="Andy Leong">
@@ -35,9 +45,7 @@ recent_projects = recent_projects
     <div class="absolute inset-0 z-10">
       <FallingCubes client:only="react" />
     </div>
-    <div
-      class="relative px-4 h-full flex flex-col justify-center items-center"
-    >
+    <div class="relative px-4 h-full flex flex-col justify-center items-center">
       <h1 class="text-4xl font-bold text-center mb-8 z-20">Andy Leong</h1>
       <p class="text-xl text-center text-muted-foreground mb-8 z-20">
         Computer Science enthusiast, web designer hobbyist
@@ -58,7 +66,55 @@ recent_projects = recent_projects
     </div>
   </div>
 
-  <div class="max-w-3xl mx-auto py-8">
+  <div class="max-w-[60vw] mx-auto py-8">
+    <div class="flex flex-row justify-between">
+      <h2 class="text-3xl font-bold mb-4">Latest posts</h2>
+      <div class="mt-4 text-right">
+        <a href="/posts" class="text-primary relative inline-block">
+          See all posts &rarr;
+          <span class="underline-animation"></span>
+        </a>
+      </div>
+    </div>
+    <div class="grid grid-cols-2 gap-4">
+      {
+        recent_posts.map((post) => (
+          <Card key={post.slug}>
+            <CardHeader>
+              <CardTitle>
+                <a
+                  href={`/posts/${post.slug}`}
+                  class="text-lg font-semibold text-primary hover:underline"
+                >
+                  {post.data.title}
+                </a>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="text-muted-foreground">
+              <time
+                datetime={post.data.timestamp.toDateString()}
+                class="text-sm mb-2 block"
+              >
+                {new Date(post.data.timestamp).toDateString()}
+              </time>
+              <p class="mt-2 text-sm line-clamp-2">{post.data.description}</p>
+            </CardContent>
+            <CardFooter className="justify-end">
+              <a
+                href={`/posts/${post.slug}`}
+                class="text-primary inline-block relative"
+              >
+                Read more &rarr;
+                <span class="underline-animation" />
+              </a>
+            </CardFooter>
+          </Card>
+        ))
+      }
+    </div>
+  </div>
+
+  <div class="max-w-[60vw] mx-auto py-8">
     <h2 class="text-3xl font-bold mb-4">Recent Projects</h2>
     <div class="space-y-6">
       {
