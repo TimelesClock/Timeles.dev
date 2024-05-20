@@ -57,7 +57,7 @@ recent_posts = recent_posts
     </div>
   </div>
 
-  <div class="max-w-[60vw] mx-auto py-8">
+  <div class="max-w-[80vw] md:max-w-[60vw] mx-auto py-8">
     <div class="flex flex-row justify-between">
       <h2 class="text-3xl font-bold mb-4">Latest posts</h2>
       <div class="mt-4 text-right">
@@ -67,10 +67,10 @@ recent_posts = recent_posts
         </a>
       </div>
     </div>
-    <div class="grid grid-cols-2 gap-4">
+    <div class="grid grid-cols-4 gap-4">
       {
         recent_posts.map((post) => (
-          <Card data-aos="fade-right" key={post.slug}>
+          <Card className="col-span-4 md:col-span-2" data-aos="fade-right" key={post.slug}>
             <CardHeader>
               <CardTitle>
                 <a
@@ -106,7 +106,7 @@ recent_posts = recent_posts
     </div>
   </div>
 
-  <div class="max-w-[60vw] mx-auto py-8">
+  <div class="max-w-[60vw] sm:max-w-[80vw] mx-auto py-8">
     <h2 class="text-3xl font-bold mb-4">Recent Projects</h2>
     <div class="space-y-6 relative">
       {
