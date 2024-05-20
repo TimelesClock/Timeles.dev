@@ -1,13 +1,13 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+// FallingCubesScene.tsx
+import React, { useEffect, useMemo, useRef } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { Physics, RigidBody } from "@react-three/rapier";
+import { Physics, RigidBody } from '@react-three/rapier';
 import { EffectComposer, Bloom, DepthOfField, Noise, Vignette } from '@react-three/postprocessing';
 import { Preload } from '@react-three/drei';
 import Cube from './Cube';
 import type { CubeRef } from './Cube';
 
-
-const Wall: React.FC<{ position: [number, number, number], size: [number, number, number] }> = ({ position, size }) => {
+const Wall: React.FC<{ position: [number, number, number]; size: [number, number, number] }> = React.memo(({ position, size }) => {
     return (
         <RigidBody type="fixed" position={position} ccd={true} restitution={0.4}>
             <mesh receiveShadow>
@@ -25,90 +25,43 @@ const Wall: React.FC<{ position: [number, number, number], size: [number, number
             </mesh>
         </RigidBody>
     );
-};
+});
 
 const Cubes: React.FC = () => {
     const cubeCount = 20;
-    function randomPos(): [number, number, number] {
-        const posx = Math.random() * 28 - 14;
-        const posy = Math.random() * 8 - 4;
-        const posz = -10;
-        return [posx, posy, posz];
-    }
-    function randomRotation(): [number, number, number] {
-        const rotx = Math.random() * 2 * Math.PI;
-        const roty = Math.random() * 2 * Math.PI;
-        const rotz = Math.random() * 2 * Math.PI;
-        return [rotx, roty, rotz];
-    }
-    const prevScrollPos = useRef(0);
-    const cubeRefs = useRef<React.RefObject<CubeRef>[]>(
-        Array.from({ length: cubeCount }, () => React.createRef<CubeRef>())
-    );
-    const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const cubeRefs = useRef<React.RefObject<CubeRef>[]>(Array.from({ length: cubeCount }, () => React.createRef<CubeRef>()));
 
-    useEffect(() => {
-        const handleScroll = () => {
-            const currentScrollPos = window.scrollY;
-            const scrollThreshold = 1; // Adjust this value as needed
+    const randomPositions = useMemo(() => {
+        return Array.from({ length: cubeCount }, () => {
+            const posx = Math.random() * 28 - 14;
+            const posy = Math.random() * 8 - 4;
+            const posz = -10;
+            return [posx, posy, posz] as [number, number, number];
+        });
+    }, [cubeCount]);
 
-            if (Math.abs(currentScrollPos - prevScrollPos.current) > scrollThreshold) {
-                if (debounceTimeoutRef.current) {
-                    clearTimeout(debounceTimeoutRef.current);
-                }
-                cubeRefs.current.forEach((cubeRef) => {
-                    cubeRef.current?.triggerHoverEffect();
-                });
-
-                debounceTimeoutRef.current = setTimeout(() => {
-                    cubeRefs.current.forEach((cubeRef) => {
-                        cubeRef.current?.removeHoverEffect();
-                    });
-                }, 100);
-
-                prevScrollPos.current = currentScrollPos;
-            }
-        };
-
-        const initialScrollPos = window.scrollY;
-
-        if (initialScrollPos > 0) {
-            cubeRefs.current.forEach((cubeRef) => {
-                cubeRef.current?.triggerHoverEffect();
-            });
-
-            debounceTimeoutRef.current = setTimeout(() => {
-                cubeRefs.current.forEach((cubeRef) => {
-                    cubeRef.current?.removeHoverEffect();
-                });
-            }, 200);
-        }
-
-        window.addEventListener('scroll', handleScroll);
-
-        return () => {
-            window.removeEventListener('scroll', handleScroll);
-            if (debounceTimeoutRef.current) {
-                clearTimeout(debounceTimeoutRef.current);
-            }
-            cubeRefs.current.forEach((cubeRef) => {
-                cubeRef.current?.removeHoverEffect();
-            });
-        };
-    }, []);
+    const randomRotations = useMemo(() => {
+        return Array.from({ length: cubeCount }, () => {
+            const rotx = Math.random() * 2 * Math.PI;
+            const roty = Math.random() * 2 * Math.PI;
+            const rotz = Math.random() * 2 * Math.PI;
+            return [rotx, roty, rotz] as [number, number, number];
+        });
+    }, [cubeCount]);
 
     return (
         <>
             {Array.from({ length: cubeCount }, (_, index) => (
-                <Cube key={index} position={randomPos()} ref={cubeRefs.current[index]} rotation={randomRotation()} />
+                <Cube key={index} position={randomPositions[index]} ref={cubeRefs.current[index]} rotation={randomRotations[index]} />
             ))}
         </>
     );
 };
+
 const FallingCubesScene: React.FC = () => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
 
-    useMemo(() => {
+    useEffect(() => {
         const canvas = canvasRef.current;
 
         const handleContextLost = (event: Event) => {
@@ -127,18 +80,13 @@ const FallingCubesScene: React.FC = () => {
             canvas?.removeEventListener('webglcontextlost', handleContextLost);
             canvas?.removeEventListener('webglcontextrestored', handleContextRestored);
         };
-    }, [canvasRef.current]);
+    }, []);
 
     return (
-        <Canvas
-            ref={canvasRef}
-            shadows
-            dpr={0.8}
-        >
+        <Canvas ref={canvasRef} shadows dpr={0.7} frameloop="demand">
             <ambientLight intensity={0.5} />
             <Preload all />
-            <Physics gravity={[0, -0.5, 0]}>
-
+            <Physics gravity={[0, -0.5, 0]} timeStep={1/120}>
                 <Wall position={[0, -5, 0]} size={[30, 0.1, 30]} />
                 <Wall position={[0, 5, 0]} size={[30, 0.1, 30]} />
                 <Wall position={[15, 0, 0]} size={[0.1, 10, 30]} />
@@ -149,18 +97,8 @@ const FallingCubesScene: React.FC = () => {
             </Physics>
 
             <EffectComposer multisampling={0}>
-                <DepthOfField
-                    focusDistance={0}
-                    focalLength={0.02}
-                    bokehScale={2}
-                    height={480}
-                />
-                <Bloom
-                    luminanceThreshold={0}
-                    luminanceSmoothing={0.9}
-                    height={300}
-                    opacity={3}
-                />
+                <DepthOfField focusDistance={0} focalLength={0.02} bokehScale={2} height={480} />
+                <Bloom luminanceThreshold={0} luminanceSmoothing={0.9} height={300} opacity={3} />
                 <Noise opacity={0.025} />
                 <Vignette eskil={false} offset={0.1} darkness={1.1} />
             </EffectComposer>

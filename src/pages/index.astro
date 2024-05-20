@@ -17,7 +17,6 @@ import FallingCubes from "@/components/threejs/FallingCubes";
 import { Badge } from "@/components/ui/badge";
 
 import { getCollection } from "astro:content";
-import { AvatarComponent } from "@/components/ui/avatarcomponent";
 
 let recent_projects = await getCollection("project");
 recent_projects = recent_projects
@@ -55,14 +54,6 @@ recent_posts = recent_posts
           <a href="/Andy Leong CV.pdf" target="_blank">View CV</a>
         </Button>
       </div>
-      <!-- <div class="flex justify-center mb-8">
-        <AvatarComponent
-          client:load
-          src="/images/hero.jpg"
-          alt="test"
-          fallbackText="test"
-        />
-      </div> -->
     </div>
   </div>
 
@@ -79,14 +70,15 @@ recent_posts = recent_posts
     <div class="grid grid-cols-2 gap-4">
       {
         recent_posts.map((post) => (
-          <Card key={post.slug}>
+          <Card data-aos="fade-right" key={post.slug}>
             <CardHeader>
               <CardTitle>
                 <a
                   href={`/posts/${post.slug}`}
-                  class="text-lg font-semibold text-primary hover:underline"
+                  class="text-lg font-semibold text-primary inline-block relative"
                 >
                   {post.data.title}
+                  <span class="underline-animation" />
                 </a>
               </CardTitle>
             </CardHeader>
@@ -116,48 +108,65 @@ recent_posts = recent_posts
 
   <div class="max-w-[60vw] mx-auto py-8">
     <h2 class="text-3xl font-bold mb-4">Recent Projects</h2>
-    <div class="space-y-6">
+    <div class="space-y-6 relative">
       {
-        recent_projects.map((project) => (
-          <Card key={project.slug}>
-            <CardHeader>
-              <CardTitle>
-                <a
-                  href={`/projects/${project.slug}`}
-                  class="text-xl font-semibold text-primary hover:underline"
-                >
-                  {project.data.title}
-                </a>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="text-muted-foreground">
-              <time
-                datetime={project.data.timestamp.toDateString()}
-                class="text-sm mb-2 block"
-              >
-                {new Date(project.data.timestamp).toDateString()}
-              </time>
-              <p class="mt-2">{project.data.description}</p>
-            </CardContent>
-            <CardFooter className="justify-between">
-              <div class="flex flex-wrap gap-2">
-                {project.data.tags.map((tag: string) => (
-                  <Badge className="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-muted text-muted-foreground">
-                    {tag}
-                  </Badge>
-                ))}
-              </div>
+        recent_projects.map((project, index) => {
+          const currentYear = new Date(project.data.timestamp).getFullYear();
+          const prevProject = recent_projects[index - 1];
+          const prevYear = prevProject
+            ? new Date(prevProject.data.timestamp).getFullYear()
+            : null;
+          const showYear = index === 0 || currentYear !== prevYear;
 
-              <a
-                href={`/projects/${project.slug}`}
-                class="text-primary inline-block relative"
-              >
-                Read more &rarr;
-                <span class="underline-animation" />
-              </a>
-            </CardFooter>
-          </Card>
-        ))
+          return (
+            <div class="relative">
+              {showYear && (
+                <div class="absolute -left-16 top-0 text-lg font-semibold text-muted-foreground">
+                  {currentYear}
+                </div>
+              )}
+              <Card data-aos="fade-right" key={project.slug}>
+                <CardHeader>
+                  <CardTitle>
+                    <a
+                      href={`/projects/${project.slug}`}
+                      class="text-xl font-semibold text-primary inline-block relative"
+                    >
+                      {project.data.title}
+                      <span class="underline-animation" />
+                    </a>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="text-muted-foreground">
+                  <time
+                    datetime={project.data.timestamp.toDateString()}
+                    class="text-sm mb-2 block"
+                  >
+                    {new Date(project.data.timestamp).toDateString()}
+                  </time>
+                  <p class="mt-2">{project.data.description}</p>
+                </CardContent>
+                <CardFooter className="justify-between">
+                  <div class="flex flex-wrap gap-2">
+                    {project.data.tags.map((tag: string) => (
+                      <Badge className="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-muted text-muted-foreground">
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
+
+                  <a
+                    href={`/projects/${project.slug}`}
+                    class="text-primary inline-block relative"
+                  >
+                    Read more &rarr;
+                    <span class="underline-animation" />
+                  </a>
+                </CardFooter>
+              </Card>
+            </div>
+          );
+        })
       }
     </div>
   </div>

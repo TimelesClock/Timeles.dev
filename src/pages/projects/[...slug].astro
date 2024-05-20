@@ -54,7 +54,7 @@ const { Content } = await entry.render();
       <div class="mt-8 flex flex-wrap">
         {
           entry.data.demoLink && (
-            <Button variant="default" size="sm" className="mr-2 mb-2" >
+            <Button variant="default" size="sm" className="mr-2 mb-2">
               <a
                 href={entry.data.demoLink}
                 target="_blank"
@@ -67,7 +67,7 @@ const { Content } = await entry.render();
         }
         {
           entry.data.codeLink && (
-            <Button variant="outline" size="sm" className="mr-2 mb-2" >
+            <Button variant="outline" size="sm" className="mr-2 mb-2">
               <a
                 href={entry.data.codeLink}
                 target="_blank"
@@ -86,7 +86,9 @@ const { Content } = await entry.render();
           )
         }
         <div class="mt-6 prose w-full max-w-full">
-          <Content />
+          <div class="markdown-content">
+            <Content />
+          </div>
         </div>
         <div class="mt-8 text-center">
           <a
@@ -119,3 +121,25 @@ const { Content } = await entry.render();
     </style>
   </div>
 </Layout>
+
+<style>
+  .markdown-content :global(h1) {
+    @apply text-2xl font-bold mb-4;
+  }
+
+  .markdown-content :global(h2) {
+    @apply text-xl font-bold mb-3;
+  }
+
+  .markdown-content :global(p) {
+    @apply mb-4;
+  }
+
+  .markdown-content :global(ul) {
+    @apply list-disc list-inside mb-4;
+  }
+
+  .markdown-content :global(li) {
+    @apply mb-2;
+  }
+</style>

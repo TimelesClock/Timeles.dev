@@ -51,7 +51,7 @@ export const ImageDialog: React.FC<ImageDialogProps> = ({ images, title }) => {
                       className="rounded-md"
                     />
                     <div className="absolute inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center text-white font-bold text-2xl rounded-md">
-                      +{images.length - 5}
+                      +{images.length - 4}
                     </div>
                   </div>
                 </DialogTrigger>
