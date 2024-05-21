@@ -16,6 +16,7 @@ export interface CubeRef {
 
 const Cube = React.forwardRef<CubeRef, CubeProps>((props, ref) => {
     const [hovered, setHovered] = useState(false);
+    const [clicked, setClicked] = useState(false);
     const lightRef = useRef<THREE.PointLight>(null);
     const materialRef = useRef<THREE.MeshPhysicalMaterial>(null);
     const RigidBodyRef = useRef<RapierRigidBody>(null);
@@ -30,8 +31,8 @@ const Cube = React.forwardRef<CubeRef, CubeProps>((props, ref) => {
     }));
 
     useEffect(() => {
-        if (hovered) {
-            RigidBodyRef?.current?.applyImpulse({ x: Math.random() -0.5, y: 1, z: Math.random()-0.5 }, true);
+        if (hovered || clicked) {
+            RigidBodyRef?.current?.applyImpulse({ x: Math.random() - 0.5, y: 1, z: Math.random() - 0.5 }, true);
             const fadeInColor = new THREE.Color('white');
             const fadeInEmissive = new THREE.Color('orange');
             const fadeInEmissiveIntensity = 2;
@@ -87,7 +88,7 @@ const Cube = React.forwardRef<CubeRef, CubeProps>((props, ref) => {
                 animationFrameId = requestAnimationFrame(fadeOutMaterial);
             };
         }
-    }, [hovered]);
+    }, [hovered, clicked]);
 
     return (
         <RigidBody ref={RigidBodyRef} position={props.position} colliders={"hull"} rotation={props.rotation}>
@@ -96,6 +97,8 @@ const Cube = React.forwardRef<CubeRef, CubeProps>((props, ref) => {
                 castShadow
                 onPointerOver={() => setHovered(true)}
                 onPointerOut={() => setHovered(false)}
+                onPointerDown={() => setClicked(true)}
+                onPointerUp={() => setClicked(false)}
             >
                 <meshPhysicalMaterial
                     ref={materialRef}
