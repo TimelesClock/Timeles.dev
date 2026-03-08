@@ -7,7 +7,7 @@ images:
 timestamp: 2024-04-11
 description: This is the old version of my personal portfolio website, which I built with Astro, React, Tailwind CSS, and TypeScript.
 demoLink: https://timeles-hwvsa6oua-timelesclocks-projects.vercel.app?_vercel_share=qOm6gr85KLodzxRzdbS7523Jc1l0t2hY
-codeLink: https://github.com/timelesclock/timeles.dev
+codeLink: https://github.com/TimelesClock/Timeles.dev/tree/b8dbde1da3f452a4e8b633c1ef87fbdebf5def94
 ---
 
 This is the old version of my personal portfolio website, which I built with Astro, React, Tailwind CSS, and TypeScript. It features an interactive module on the home page created with three.js (React-three-fiber). The website is hosted on Vercel.
