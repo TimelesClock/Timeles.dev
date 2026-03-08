@@ -1,8 +1,8 @@
 ---
-import "@fontsource/space-mono";
 import Navigation from "../components/Navigation.astro";
 import Footer from "../components/Footer.astro";
-import  SpeedInsights  from "@vercel/speed-insights/astro"
+import SpeedInsights from "@vercel/speed-insights/astro";
+
 export interface Props {
   title: string;
 }
@@ -10,31 +10,73 @@ export interface Props {
 const { title } = Astro.props;
 ---
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/svg+xml" href="/favicon.ico" />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
   </head>
-  <body class="bg-gray-900 text-white">
+  <body>
     <SpeedInsights />
     <Navigation />
-    <div class="pb-6  mx-auto">
+    <main>
       <slot />
       <Footer />
-      <script src="../js/main"></script>
-    </div>
+    </main>
+    <script src="../js/main"></script>
   </body>
 </html>
+
 <style is:global>
   html {
-    background-color: #0d0208;
+    background-color: hsl(222, 84%, 4%);
+    scroll-behavior: smooth;
+    /*
+      16px base → at 150% OS scaling this renders as ~24px logical,
+      which is comfortable reading size on 2K.
+      clamp keeps it from going tiny on small screens.
+    */
+    font-size: clamp(15px, 1.1vw, 18px);
   }
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
   * {
     font-family: "Space Mono", monospace;
-    color: white;
+  }
+
+  body {
+    background-color: hsl(222, 84%, 4%);
+    color: hsl(210, 40%, 88%);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::selection {
+    background: hsl(217, 33%, 24%);
+    color: hsl(210, 40%, 98%);
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: hsl(222, 84%, 4%);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: hsl(217, 33%, 20%);
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(217, 33%, 30%);
   }
 </style>

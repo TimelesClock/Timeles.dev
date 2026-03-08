@@ -2,14 +2,44 @@
 import { NavigationMenuComponent } from "./NavigationMenu";
 ---
 
-<header class="bg-background">
-  <nav
-    class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex justify-evenly items-center"
-  >
-    <div class="flex items-center flex-1">
-      <a href="/" class="text-xl font-bold text-foreground">Andy Leong </a>
-    </div>
-
+<header class="site-nav">
+  <nav class="site-nav-inner">
+    <a href="/" class="site-logo">Andy Leong</a>
     <NavigationMenuComponent client:load />
   </nav>
 </header>
+
+<style>
+  .site-nav {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: hsla(222, 84%, 4%, 0.88);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid hsl(217, 33%, 11%);
+  }
+
+  .site-nav-inner {
+    /* Match content-wrapper: min(1100px, 80vw) */
+    max-width: min(1100px, 80vw);
+    margin: 0 auto;
+    padding: 0 2rem;
+    height: 62px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .site-logo {
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    color: hsl(210, 40%, 86%);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+  .site-logo:hover {
+    color: hsl(210, 40%, 98%);
+  }
+</style>

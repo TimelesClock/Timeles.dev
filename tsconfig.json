@@ -6,7 +6,6 @@
     "jsxImportSource": "react",
     "types": ["astro/client"],
     "verbatimModuleSyntax": true,
-    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
     }
