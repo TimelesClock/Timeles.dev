@@ -1,11 +1,9 @@
-"use client"
-
 import * as React from "react"
 import useEmblaCarousel, {
   type UseEmblaCarouselType,
 } from "embla-carousel-react"
 
-import { cn } from "@/components/lib/utils"
+import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react"
 
@@ -173,7 +171,7 @@ function CarouselItem({ className, ...props }: React.ComponentProps<"div">) {
 
 function CarouselPrevious({
   className,
-  variant = "outline",
+  variant = "default",
   size = "icon-sm",
   ...props
 }: React.ComponentProps<typeof Button>) {
@@ -203,7 +201,7 @@ function CarouselPrevious({
 
 function CarouselNext({
   className,
-  variant = "outline",
+  variant = "default",
   size = "icon-sm",
   ...props
 }: React.ComponentProps<typeof Button>) {

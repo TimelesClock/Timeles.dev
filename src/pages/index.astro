@@ -2,7 +2,7 @@
 import "../styles/globals.css";
 import Layout from "../layouts/Layout.astro";
 import { ExternalLinkIcon } from "@radix-ui/react-icons";
-import HeroCanvas from "@/components/HeroCanvas";
+import FallingCubes2D from "@/components/Cubes";
 import { getCollection } from "astro:content";
 
 let recent_projects = await getCollection("project");
@@ -25,55 +25,56 @@ recent_posts = recent_posts
 ---
 
 <Layout title="Andy Leong">
-  <!-- ── Hero ─────────────────────────────────────────────── -->
-  <section class="hero-section">
-    <div class="hero-canvas-wrapper">
-      <HeroCanvas client:only="react" />
+  <!-- ═══════════════════ HERO ════════════════════════════ -->
+  <section class="hero">
+    <div class="hero-bg">
+      <FallingCubes2D client:only="react" />
     </div>
-    <div class="hero-vignette"></div>
-    <div class="hero-content">
-      <div class="hero-eyebrow">Singapore · Full-Stack Developer</div>
-      <h1 class="hero-title">Andy Leong</h1>
-      <p class="hero-subtitle">
+    <div class="hero-fade"></div>
+
+    <div class="hero-copy">
+      <p class="eyebrow">Singapore · Full-Stack Developer</p>
+      <h1 class="hero-name">Andy Leong</h1>
+      <p class="hero-sub">
         Computer Science enthusiast &amp; web designer hobbyist
       </p>
-      <div class="hero-actions">
+      <div class="hero-ctas">
         <a href="/CV.pdf" target="_blank" class="btn-primary">View CV</a>
         <a href="/projects" class="btn-ghost">See projects →</a>
       </div>
     </div>
-    <div class="scroll-hint">
-      <span class="scroll-line"></span>
+
+    <div class="scroll-cue" aria-hidden="true">
+      <span class="scroll-bar"></span>
     </div>
   </section>
 
-  <!-- ── Content ──────────────────────────────────────────── -->
-  <div class="content-wrapper">
-    <!-- Latest Posts -->
-    <section class="section">
-      <div class="section-header">
+  <!-- ═══════════════════ CONTENT ═════════════════════════ -->
+  <div class="page">
+    <section class="sec">
+      <header class="sec-head">
         <div>
-          <div class="section-label">Writing</div>
-          <h2 class="section-title">Latest posts</h2>
+          <span class="sec-label">Writing</span>
+          <h2 class="sec-title">Latest posts</h2>
         </div>
-        <a href="/posts" class="see-all-link">All posts →</a>
-      </div>
-      <div class="posts-grid">
+        <a href="/posts" class="link-arrow">All posts →</a>
+      </header>
+      <div class="post-grid">
         {
           recent_posts.map((post) => (
             <a href={`/posts/${post.slug}`} class="post-card">
-              <div class="post-card-date">
+              <time class="card-date">
                 {new Date(post.data.timestamp).toLocaleDateString("en-SG", {
                   year: "numeric",
                   month: "short",
                   day: "numeric",
                 })}
-              </div>
-              <h3 class="post-card-title">{post.data.title}</h3>
-              <p class="post-card-desc">{post.data.description}</p>
-              <div class="post-card-tags">
-                {post.data.tags.map((tag: string) => (
-                  <span class="tag">{tag}</span>
+              </time>
+              <h3 class="card-title">{post.data.title}</h3>
+              <p class="card-body">{post.data.description}</p>
+              <div class="pill-row">
+                {post.data.tags.map((t: string) => (
+                  <span class="pill">{t}</span>
                 ))}
               </div>
             </a>
@@ -82,51 +83,43 @@ recent_posts = recent_posts
       </div>
     </section>
 
-    <div class="divider"></div>
+    <div class="rule"></div>
 
-    <!-- Recent Projects -->
-    <section class="section">
-      <div class="section-header">
+    <section class="sec">
+      <header class="sec-head">
         <div>
-          <div class="section-label">Work</div>
-          <h2 class="section-title">Recent Projects</h2>
+          <span class="sec-label">Work</span>
+          <h2 class="sec-title">Recent Projects</h2>
         </div>
-        <a href="/projects" class="see-all-link">All projects →</a>
-      </div>
-      <div class="projects-list">
+        <a href="/projects" class="link-arrow">All projects →</a>
+      </header>
+      <div class="proj-list">
         {
-          recent_projects.map((project, index) => {
-            const currentYear = new Date(project.data.timestamp).getFullYear();
-            const prevProject = recent_projects[index - 1];
-            const prevYear = prevProject
-              ? new Date(prevProject.data.timestamp).getFullYear()
-              : null;
-            const showYear = index === 0 || currentYear !== prevYear;
+          recent_projects.map((project, i) => {
+            const yr = new Date(project.data.timestamp).getFullYear();
+            const prev = recent_projects[i - 1];
+            const showYr =
+              i === 0 || yr !== new Date(prev.data.timestamp).getFullYear();
             return (
-              <div class="project-row-wrapper">
-                {showYear && <div class="year-marker">{currentYear}</div>}
-                <a
-                  href={`/projects/${project.slug}`}
-                  class="project-row"
-                >
-                  <div class="project-row-left">
-                    <div class="project-row-dot" />
+              <div>
+                {showYr && <div class="yr-label">{yr}</div>}
+                <a href={`/projects/${project.slug}`} class="proj-row">
+                  <div class="proj-left">
+                    <span class="proj-dot" />
                     <div>
-                      <div class="project-row-title">
+                      <div class="proj-name">
                         {project.data.title}
-                        <ExternalLinkIcon className="project-ext-icon" />
+                        <ExternalLinkIcon className="proj-ext" />
                       </div>
-                      <div class="project-row-desc">
-                        {project.data.description}
-                      </div>
+                      <div class="proj-desc">{project.data.description}</div>
                     </div>
                   </div>
-                  <div class="project-row-tags">
-                    {project.data.tags.slice(0, 3).map((tag: string) => (
-                      <span class="tag">{tag}</span>
+                  <div class="pill-row pill-row--end">
+                    {project.data.tags.slice(0, 3).map((t: string) => (
+                      <span class="pill">{t}</span>
                     ))}
                     {project.data.tags.length > 3 && (
-                      <span class="tag-more">
+                      <span class="pill pill--dim">
                         +{project.data.tags.length - 3}
                       </span>
                     )}
@@ -139,16 +132,16 @@ recent_posts = recent_posts
       </div>
     </section>
 
-    <div class="divider"></div>
+    <div class="rule"></div>
 
-    <!-- Contact -->
-    <section class="section contact-section">
-      <div class="section-label" style="text-align:center">Get in touch</div>
-      <h2 class="section-title" style="text-align:center;margin-bottom:0.6rem">
-        Connect with me
-      </h2>
-      <p class="contact-sub">Have a project in mind or just want to say hi?</p>
-      <a href="mailto:leongandy026@gmail.com" class="btn-primary contact-btn">
+    <section class="sec contact-sec">
+      <p class="eyebrow" style="text-align:center">Get in touch</p>
+      <h2 class="contact-title">Let's work together</h2>
+      <p class="contact-copy">
+        Open to collaborations, freelance projects, and interesting
+        conversations.
+      </p>
+      <a href="mailto:leongandy026@gmail.com" class="btn-primary">
         leongandy026@gmail.com
       </a>
       <div class="social-row">
@@ -156,23 +149,19 @@ recent_posts = recent_posts
           href="https://github.com/timelesclock"
           target="_blank"
           rel="noreferrer"
-          class="social-link"
+          class="social-a"
           aria-label="GitHub"
         >
-          <img src="/images/github-icon.svg" alt="GitHub" class="social-icon" />
+          <img src="/images/github-icon.svg" alt="" class="social-ico" />
         </a>
         <a
           href="https://www.linkedin.com/in/andy-leong-9bb486272/"
           target="_blank"
           rel="noreferrer"
-          class="social-link"
+          class="social-a"
           aria-label="LinkedIn"
         >
-          <img
-            src="/images/linkedin-icon.svg"
-            alt="LinkedIn"
-            class="social-icon"
-          />
+          <img src="/images/linkedin-icon.svg" alt="" class="social-ico" />
         </a>
       </div>
     </section>
@@ -180,10 +169,8 @@ recent_posts = recent_posts
 </Layout>
 
 <style>
-  /* ──────────────────────────────────────────────────────────
-     Hero
-  ────────────────────────────────────────────────────────── */
-  .hero-section {
+  /* ── Hero ─────────────────────────────────────────────────── */
+  .hero {
     position: relative;
     height: 100svh;
     min-height: 620px;
@@ -192,437 +179,375 @@ recent_posts = recent_posts
     justify-content: center;
     overflow: hidden;
   }
-
-  .hero-canvas-wrapper {
+  .hero-bg {
     position: absolute;
     inset: 0;
     z-index: 0;
   }
-
-  /* Radial vignette so particles fade at edges, text stays readable */
-  .hero-vignette {
+  .hero-fade {
     position: absolute;
-    inset: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 200px;
     z-index: 1;
-    background:
-      radial-gradient(
-        ellipse 65% 55% at 50% 50%,
-        transparent 15%,
-        hsl(222, 84%, 4%) 75%
-      ),
-      linear-gradient(to bottom, transparent 50%, hsl(222, 84%, 4%) 100%);
+    background: linear-gradient(to bottom, transparent, hsl(222, 84%, 4%));
+    pointer-events: none;
   }
-
-  .hero-content {
+  .hero-copy {
     position: relative;
     z-index: 2;
     text-align: center;
     padding: 0 2rem;
-    animation: fadeUp 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation: rise 1s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
-
-  @keyframes fadeUp {
+  @keyframes rise {
     from {
       opacity: 0;
-      transform: translateY(28px);
+      transform: translateY(24px);
     }
     to {
       opacity: 1;
       transform: translateY(0);
     }
   }
-
-  .hero-eyebrow {
-    font-size: 0.8rem;
-    letter-spacing: 0.2em;
+  .eyebrow {
+    font-size: 0.72rem;
+    letter-spacing: 0.22em;
     text-transform: uppercase;
-    color: hsl(215, 20%, 52%);
+    color: hsl(215, 20%, 48%);
     margin-bottom: 1.4rem;
-    animation: fadeUp 0.9s 0.1s cubic-bezier(0.22, 1, 0.36, 1) both;
+    opacity: 0;
+    animation: rise 1s 0.1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
   }
-
-  .hero-title {
-    /* clamp: min 3rem, fluid, max 6rem — visually large on 2K */
-    font-size: clamp(3rem, 7vw, 6rem);
+  .hero-name {
+    font-size: clamp(3.2rem, 8vw, 6.5rem);
     font-weight: 700;
-    line-height: 1.05;
-    letter-spacing: -0.025em;
-    color: hsl(210, 40%, 97%);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: hsl(210, 40%, 96%);
     margin-bottom: 1.1rem;
-    animation: fadeUp 0.9s 0.15s cubic-bezier(0.22, 1, 0.36, 1) both;
+    opacity: 0;
+    animation: rise 1s 0.18s cubic-bezier(0.22, 1, 0.36, 1) forwards;
   }
-
-  .hero-subtitle {
-    font-size: clamp(0.95rem, 1.6vw, 1.15rem);
-    color: hsl(215, 20%, 52%);
+  .hero-sub {
+    font-size: clamp(0.88rem, 1.5vw, 1.05rem);
+    color: hsl(215, 20%, 48%);
+    line-height: 1.7;
     margin-bottom: 2.8rem;
-    animation: fadeUp 0.9s 0.2s cubic-bezier(0.22, 1, 0.36, 1) both;
+    opacity: 0;
+    animation: rise 1s 0.26s cubic-bezier(0.22, 1, 0.36, 1) forwards;
   }
-
-  .hero-actions {
+  .hero-ctas {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 1.1rem;
+    gap: 1.4rem;
     flex-wrap: wrap;
-    animation: fadeUp 0.9s 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
+    opacity: 0;
+    animation: rise 1s 0.34s cubic-bezier(0.22, 1, 0.36, 1) forwards;
   }
-
-  /* ── Buttons ── */
   .btn-primary {
     display: inline-flex;
     align-items: center;
-    padding: 0.75rem 1.75rem;
-    background: hsl(210, 40%, 96%);
-    color: hsl(222, 84%, 8%);
-    font-size: 0.85rem;
+    padding: 0.7rem 1.6rem;
+    font-size: 0.78rem;
     font-weight: 600;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
     text-decoration: none;
-    border-radius: 5px;
+    color: hsl(222, 60%, 7%);
+    background: hsl(210, 35%, 92%);
+    border-radius: 4px;
     transition:
-      opacity 0.2s,
-      transform 0.2s;
+      background 0.2s,
+      box-shadow 0.2s;
   }
   .btn-primary:hover {
-    opacity: 0.85;
-    transform: translateY(-2px);
+    background: hsl(210, 40%, 98%);
+    box-shadow: 0 0 24px hsla(210, 40%, 80%, 0.2);
   }
-
   .btn-ghost {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.75rem 1.1rem;
-    color: hsl(215, 20%, 60%);
-    font-size: 0.85rem;
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    color: hsl(215, 20%, 42%);
     text-decoration: none;
-    border-radius: 5px;
     transition: color 0.2s;
   }
   .btn-ghost:hover {
-    color: hsl(210, 40%, 96%);
+    color: hsl(210, 40%, 75%);
   }
 
-  /* Scroll indicator */
-  .scroll-hint {
+  .scroll-cue {
     position: absolute;
-    bottom: 2.5rem;
+    bottom: 2.2rem;
     left: 50%;
     transform: translateX(-50%);
-    z-index: 2;
-    animation: fadeUp 1s 0.7s both;
+    z-index: 3;
+    opacity: 0;
+    animation: rise 1s 1s forwards;
   }
-  .scroll-line {
+  .scroll-bar {
     display: block;
     width: 1px;
-    height: 3.5rem;
-    background: linear-gradient(to bottom, transparent, hsl(215, 20%, 40%));
-    animation: scrollPulse 2.2s ease-in-out infinite;
+    height: 3rem;
+    background: linear-gradient(to bottom, transparent, hsl(215, 20%, 38%));
+    animation: breathe 2.5s ease-in-out infinite;
   }
-  @keyframes scrollPulse {
+  @keyframes breathe {
     0%,
     100% {
-      opacity: 0.25;
-      transform: scaleY(0.75);
+      opacity: 0.2;
+      transform: scaleY(0.6) translateY(-6px);
     }
     50% {
-      opacity: 0.75;
-      transform: scaleY(1);
+      opacity: 0.7;
+      transform: scaleY(1) translateY(0);
     }
   }
 
-  /* ──────────────────────────────────────────────────────────
-     Layout — wider at 2K, uses vw for natural scaling
-  ────────────────────────────────────────────────────────── */
-  .content-wrapper {
-    /* 
-      min(1100px, 80vw) keeps a comfortable reading width
-      at 2560px × 150% = effective 1707px logical — 80vw = ~1365px 
-    */
-    max-width: min(1100px, 80vw);
-    margin: 0 auto;
-    padding: 0 2rem;
-  }
+  /* ── Page content ─────────────────────────────────────────── */
+.page {
+  max-width: min(860px, 72vw);
+  margin: 0 auto;
+  padding: 1rem 2rem 6rem;
+}
 
-  .section {
-    padding: 5.5rem 0;
+  .sec {
+    padding: 5rem 0;
   }
-
-  .section-header {
+  .sec-head {
     display: flex;
     align-items: flex-end;
     justify-content: space-between;
-    margin-bottom: 2.8rem;
+    margin-bottom: 2.5rem;
   }
-
-  .section-label {
-    font-size: 0.72rem;
-    letter-spacing: 0.2em;
+  .sec-label {
+    display: block;
+    font-size: 0.65rem;
+    letter-spacing: 0.22em;
     text-transform: uppercase;
-    color: hsl(215, 20%, 42%);
-    margin-bottom: 0.45rem;
+    color: hsl(215, 20%, 38%);
+    margin-bottom: 0.4rem;
   }
-
-  .section-title {
-    font-size: clamp(1.5rem, 2.5vw, 2rem);
+  .sec-title {
+    font-size: clamp(1.4rem, 2.5vw, 1.9rem);
     font-weight: 700;
-    color: hsl(210, 40%, 94%);
-    letter-spacing: -0.015em;
-    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: hsl(210, 40%, 92%);
+    line-height: 1.15;
+    margin: 0;
   }
-
-  .see-all-link {
-    font-size: 0.82rem;
-    color: hsl(215, 20%, 48%);
+  .link-arrow {
+    font-size: 0.74rem;
+    color: hsl(215, 20%, 36%);
     text-decoration: none;
     letter-spacing: 0.04em;
-    padding-bottom: 0.2rem;
-    transition: color 0.2s;
     white-space: nowrap;
+    transition: color 0.2s;
   }
-  .see-all-link:hover {
-    color: hsl(210, 40%, 92%);
+  .link-arrow:hover {
+    color: hsl(210, 40%, 72%);
   }
-
-  .divider {
+  .rule {
     height: 1px;
-    background: hsl(217, 33%, 13%);
+    background: hsl(217, 33%, 10%);
   }
 
-  /* ──────────────────────────────────────────────────────────
-     Posts
-  ────────────────────────────────────────────────────────── */
-  .posts-grid {
+  /* Posts */
+  .post-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 1px;
-    background: hsl(217, 33%, 13%);
-    border: 1px solid hsl(217, 33%, 13%);
-    border-radius: 10px;
-    overflow: hidden;
+    gap: 1.25rem;
   }
-  @media (max-width: 640px) {
-    .posts-grid {
+  @media (max-width: 600px) {
+    .post-grid {
       grid-template-columns: 1fr;
     }
   }
-
   .post-card {
-    display: block;
-    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    padding: 1.8rem;
     background: hsl(222, 84%, 4%);
     text-decoration: none;
-    transition: background 0.2s;
+    border: 1px solid hsl(217, 33%, 10%);
+    border-radius: 8px;
+    transition:
+      background 0.2s,
+      border-color 0.2s;
   }
   .post-card:hover {
-    background: hsl(222, 55%, 7%);
+    background: hsl(222, 60%, 6%);
+    border-color: hsl(217, 33%, 18%);
   }
 
-  .post-card-date {
-    font-size: 0.7rem;
-    letter-spacing: 0.1em;
-    color: hsl(215, 20%, 38%);
-    margin-bottom: 0.8rem;
-    text-transform: uppercase;
-  }
-
-  .post-card-title {
-    font-size: 1.05rem;
-    font-weight: 600;
-    color: hsl(210, 40%, 93%);
-    line-height: 1.4;
-    margin-bottom: 0.6rem;
-  }
-
-  .post-card-desc {
-    font-size: 0.84rem;
-    color: hsl(215, 20%, 50%);
-    line-height: 1.65;
-    margin-bottom: 1.1rem;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  .post-card-tags {
+  /* Pills */
+  .pill-row {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.4rem;
+    gap: 0.35rem;
   }
-
-  /* ──────────────────────────────────────────────────────────
-     Tags
-  ────────────────────────────────────────────────────────── */
-  .tag {
-    font-size: 0.65rem;
-    letter-spacing: 0.07em;
-    text-transform: uppercase;
-    padding: 0.22rem 0.55rem;
-    border-radius: 3px;
-    background: hsl(217, 33%, 11%);
-    color: hsl(215, 20%, 48%);
-    border: 1px solid hsl(217, 33%, 17%);
-  }
-  .tag-more {
-    font-size: 0.65rem;
-    color: hsl(215, 20%, 38%);
-    padding: 0.22rem 0.4rem;
+  .pill-row--end {
+    justify-content: flex-end;
     align-self: center;
+    flex-shrink: 0;
+    max-width: 210px;
+  }
+  .pill {
+    font-size: 0.58rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.5rem;
+    border-radius: 3px;
+    background: hsl(217, 33%, 8%);
+    color: hsl(215, 20%, 40%);
+    border: 1px solid hsl(217, 33%, 13%);
+  }
+  .pill--dim {
+    color: hsl(215, 20%, 28%);
+    background: transparent;
+    border-color: transparent;
   }
 
-  /* ──────────────────────────────────────────────────────────
-     Projects
-  ────────────────────────────────────────────────────────── */
-  .projects-list {
+  /* Projects */
+  .proj-list {
     display: flex;
     flex-direction: column;
   }
-
-  .project-row-wrapper {
-    position: relative;
-  }
-
-  .year-marker {
-    font-size: 0.7rem;
-    letter-spacing: 0.14em;
+  .yr-label {
+    font-size: 0.63rem;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: hsl(215, 20%, 32%);
-    padding: 1.8rem 0 0.85rem;
+    color: hsl(215, 20%, 26%);
+    padding: 1.8rem 0 0.75rem;
   }
-
-  .project-row {
+  .proj-row {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
     gap: 1.5rem;
-    padding: 1.4rem 1.1rem;
-    margin: 0 -1.1rem;
-    border-radius: 7px;
+    padding: 1.3rem 1rem;
+    margin: 0 -1rem;
+    border-radius: 6px;
     text-decoration: none;
-    border-bottom: 1px solid hsl(217, 33%, 10%);
+    border-bottom: 1px solid hsl(217, 33%, 8%);
     transition: background 0.15s;
   }
-  .project-row:hover {
-    background: hsl(222, 55%, 7%);
+  .proj-row:hover {
+    background: hsl(222, 60%, 6%);
   }
-  .project-row:last-child {
+  .proj-row:last-child {
     border-bottom: none;
   }
-
-  .project-row-left {
+  .proj-left {
     display: flex;
     align-items: flex-start;
-    gap: 1rem;
+    gap: 0.85rem;
     flex: 1;
     min-width: 0;
   }
-
-  .project-row-dot {
-    width: 7px;
-    height: 7px;
+  .proj-dot {
+    display: block;
+    width: 6px;
+    height: 6px;
     border-radius: 50%;
-    background: hsl(215, 20%, 32%);
+    background: hsl(215, 20%, 26%);
     flex-shrink: 0;
-    margin-top: 0.5rem;
-    transition: background 0.15s;
+    margin-top: 0.46rem;
+    transition: background 0.2s;
   }
-  .project-row:hover .project-row-dot {
-    background: hsl(210, 40%, 78%);
+  .proj-row:hover .proj-dot {
+    background: hsl(210, 40%, 65%);
   }
-
-  .project-row-title {
-    font-size: 0.96rem;
+  .proj-name {
+    font-size: 0.92rem;
     font-weight: 600;
-    color: hsl(210, 40%, 90%);
-    margin-bottom: 0.35rem;
+    color: hsl(210, 40%, 86%);
+    margin-bottom: 0.3rem;
     display: flex;
     align-items: center;
-    gap: 0.45rem;
+    gap: 0.4rem;
   }
-
-  :global(.project-ext-icon) {
-    width: 13px;
-    height: 13px;
-    color: hsl(215, 20%, 42%);
+  :global(.proj-ext) {
+    width: 12px;
+    height: 12px;
+    color: hsl(215, 20%, 34%);
     flex-shrink: 0;
+    transition: color 0.2s;
   }
-
-  .project-row-desc {
-    font-size: 0.82rem;
-    color: hsl(215, 20%, 46%);
+  .proj-row:hover :global(.proj-ext) {
+    color: hsl(210, 40%, 60%);
+  }
+  .proj-desc {
+    font-size: 0.78rem;
+    color: hsl(215, 20%, 42%);
     line-height: 1.6;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
-
-  .project-row-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.38rem;
-    justify-content: flex-end;
-    flex-shrink: 0;
-    max-width: 220px;
-    align-self: center;
-  }
-  @media (max-width: 640px) {
-    .project-row {
+  @media (max-width: 600px) {
+    .proj-row {
       flex-direction: column;
     }
-    .project-row-tags {
+    .pill-row--end {
       max-width: none;
       justify-content: flex-start;
     }
   }
 
-  /* ──────────────────────────────────────────────────────────
-     Contact
-  ────────────────────────────────────────────────────────── */
-  .contact-section {
+  /* Contact */
+  .contact-sec {
     display: flex;
     flex-direction: column;
     align-items: center;
-    text-align: center;
     padding-bottom: 7rem;
   }
-
-  .contact-sub {
-    font-size: 0.88rem;
-    color: hsl(215, 20%, 46%);
-    margin-bottom: 2.2rem;
+  .contact-title {
+    font-size: clamp(1.8rem, 3vw, 2.5rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: hsl(210, 40%, 92%);
+    text-align: center;
+    margin-bottom: 0.5rem;
   }
-
-  .contact-btn {
-    font-size: 0.82rem;
-    margin-bottom: 2.2rem;
+  .contact-copy {
+    font-size: 0.84rem;
+    color: hsl(215, 20%, 40%);
+    margin-bottom: 2rem;
+    text-align: center;
+    line-height: 1.7;
   }
-
   .social-row {
     display: flex;
-    gap: 1.5rem;
+    gap: 0.8rem;
+    margin-top: 2rem;
   }
-
-  .social-link {
+  .social-a {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0.55rem;
-    border-radius: 7px;
-    transition: background 0.2s;
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    border: 1px solid hsl(217, 33%, 12%);
+    transition:
+      border-color 0.2s,
+      background 0.2s;
   }
-  .social-link:hover {
-    background: hsl(217, 33%, 13%);
+  .social-a:hover {
+    border-color: hsl(217, 33%, 20%);
+    background: hsl(217, 33%, 8%);
   }
-
-  .social-icon {
-    width: 1.35rem;
-    height: 1.35rem;
-    filter: invert(100%) sepia(0%) saturate(0%) brightness(65%) contrast(100%);
+  .social-ico {
+    width: 1rem;
+    height: 1rem;
+    filter: invert(100%) sepia(0%) saturate(0%) brightness(45%) contrast(100%);
     transition: filter 0.2s;
   }
-  .social-link:hover .social-icon {
-    filter: invert(100%) sepia(0%) saturate(0%) brightness(100%) contrast(100%);
+  .social-a:hover .social-ico {
+    filter: invert(100%) sepia(0%) saturate(0%) brightness(75%) contrast(100%);
   }
 </style>

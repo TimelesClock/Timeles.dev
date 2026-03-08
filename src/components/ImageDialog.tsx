@@ -1,16 +1,19 @@
 import React from "react";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { CarouselApi } from "@/components/CarouselApi";
+import { VisuallyHidden } from "radix-ui";
+import { DialogTitle } from "@radix-ui/react-dialog";
 
 interface ImageDialogProps {
   images: { src: string; alt?: string }[];
   title: string;
 }
-
+// i cant remember what i did here
 export const ImageDialog: React.FC<ImageDialogProps> = ({ images, title }) => {
   return (
     <div className="mt-8">
       <Dialog>
+          <DialogTitle>{title}</DialogTitle>
         {images.length === 1 ? (
           <DialogTrigger>
             <img
